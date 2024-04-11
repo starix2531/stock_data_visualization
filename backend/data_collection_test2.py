@@ -47,7 +47,7 @@ def get_sp500_data():
         return None  # Return None on error
 
 
-    for ticker in sp500_tickers:
+    for ticker in sp500_tickers[2:4]:
         try:
             data = yf.download(ticker, group_by="Ticker", period='5y')
 
@@ -59,10 +59,26 @@ def get_sp500_data():
         
         with pool.connect() as conn:  
             create_table_if_not_exists(pool, ticker)
-            
-            data.to_sql(ticker, con=conn, if_exists='append', index=True, index_label='Date')
-            conn.commit()
-
+            for date, row in data.iterrows():
+                try:
+                    # Construct SQL INSERT statement
+                    sql = sqlalchemy.text(f"""
+                        INSERT INTO `{ticker}` (Date, Open, High, Low, Close, `Adj Close`, Volume)
+                        VALUES (:date, :open, :high, :low, :close, :adj_close, :volume)
+                    """)
+                    # Execute SQL statement with parameters
+                    conn.execute(sql, parameters={
+                        "date": date.strftime('%Y-%m-%d'),
+                        "open": row['Open'],
+                        "high": row['High'],
+                        "low": row['Low'],
+                        "close": row['Close'],
+                        "adj_close": row['Adj Close'],
+                        "volume": row['Volume']
+                    })
+                    conn.commit()
+                except Exception as e:
+                    print(f"Error storing data for {ticker} on {date.strftime('%Y-%m-%d')}: {e}")
     return 
 
 # Test the function 
