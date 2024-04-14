@@ -1,0 +1,45 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #4c9e5b;
+  margin-bottom: 20px;
+}
+
+header h1 {
+  color: #fff;
+}
+
+header ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+header ul li {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+header ul li a {
+  color: #fff;
+  text-decoration: none;
+}
+
+main {
+  padding: 20px;
+}
+
+footer {
+  background-color: #333333;
+  color: #fff;
+  padding: 15px;
+  text-align: center;
+  margin-top: 30px;
+}

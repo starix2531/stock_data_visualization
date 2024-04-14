@@ -1,0 +1,44 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+/* CSS for basic layout */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #add8e6;
+  margin-bottom: 20px;
+}
+
+/* Main navigation list styles */
+main ul {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two equal-width columns */
+  grid-gap: 20px; /* Adjust the gap between grid items */
+  list-style-type: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+main ul li img {
+  max-width: 50px; /* Adjust this value to your desired size */
+  max-height: 50px; /* Adjust this value to your desired size */
+}
+
+/* Style for Login/Forum buttons */
+header ul {
+  margin: 0;
+}
+
+header ul li {
+  margin-left: 10px;
+}
+
+footer {
+  background-color: #add8e6; /* Gray example */
+  padding: 15px;
+  text-align: center;
+  margin-bottom: 30px;
+}
