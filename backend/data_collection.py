@@ -1,5 +1,5 @@
 import os
-import pandas as pd
+from flask import Flask, jsonify, request
 import yfinance as yf
 import pymysql
 import sqlalchemy
@@ -18,55 +18,25 @@ def getconn() -> pymysql.connections.Connection:
     )
     return conn
 
-def create_table_if_not_exists(engine, ticker):
-    with engine.connect() as conn:  
-            create_table_sql = sqlalchemy.text(f"""
-                    CREATE TABLE IF NOT EXISTS `{ticker}` (
-                        Date DATE,
-                        Open FLOAT,
-                        High FLOAT,
-                        Low FLOAT,
-                        Close FLOAT,
-                        `Adj Close` FLOAT,
-                        Volume FLOAT
-                    )
-                """)
-            conn.execute(create_table_sql) 
+@app.route('/api/stock_data', methods=['GET'])
+def get_stock_data():
+    ticker = request.args.get('ticker')
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
 
-pool = sqlalchemy.create_engine(
-    "mysql+pymysql://",
-    creator=getconn,
-)
+    with pool.connect() as conn:
+        sql = sqlalchemy.text(f"""
+            SELECT Date, Open, High, Low, Close, `Adj Close`, Volume
+            FROM `{ticker}`
+            WHERE Date BETWEEN :start_date AND :end_date
+        """)
+        result = conn.execute(sql, parameters={
+            "start_date": start_date,
+            "end_date": end_date
+        })
+        data = result.fetchall()
 
-def get_sp500_data():
-    # Get S&P 500 ticker symbols
-    try:  
-        sp500_tickers = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')[0]['Symbol'].to_list()
-    except Exception as e: 
-        print(f"Error getting ticker symbols: {e}") 
-        return None  # Return None on error
-
-
-    for ticker in sp500_tickers:
-        try:
-            data = yf.download(ticker, group_by="Ticker", period='5y')
-
-        except Exception as e: 
-            print(f"Error fetching data for {ticker}: {e}") 
-        
-        #create table if not exists
-        create_table_if_not_exists(pool, ticker)
-        
-        with pool.connect() as conn:  
-            create_table_if_not_exists(pool, ticker)
-            
-            data.to_sql(ticker, con=conn, if_exists='append', index=True, index_label='Date')
-            conn.commit()
-
-    return 
-
-# Test the function 
+    return jsonify(data)
 
 if __name__ == '__main__':
-    sp500_data = get_sp500_data()
-
+    app.run()

@@ -1,4 +1,5 @@
 import React from "react";
+import * as d3 from "d3";
 import "./Dashboard.css";
 
 const Dashboard = () => {
@@ -11,6 +12,8 @@ const Dashboard = () => {
 
     d3.json(url).then((data) => {
       // Process the fetched data and create the visualization
+      // Here, we are creating a line chart
+      
       // using D3.js
       // ...
 
