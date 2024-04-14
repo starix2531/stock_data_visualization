@@ -22,10 +22,14 @@ main ul {
   margin: 20px 0;
 }
 
+
 main ul li img {
-  max-width: 50px; /* Adjust this value to your desired size */
-  max-height: 50px; /* Adjust this value to your desired size */
+  max-width: 200px; /* Adjust this value to your desired size */
+  max-height: 200px; /* Adjust this value to your desired size */
 }
+
+
+
 
 /* Style for Login/Forum buttons */
 header ul {
