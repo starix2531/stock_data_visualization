@@ -10,11 +10,11 @@ os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/path/to/your/credentials.json'
 def getconn() -> sqlalchemy.engine.Connection:
     connector = Connector()
     conn = connector.connect(
-        "your-instance-connection-name",
+        "avid-booster-386403:us-west1:stats418stock",
         "pymysql",
-        user="your-username",
-        password="your-password",
-        db="your-database-name"
+        user='starix',
+        password='**##418project',
+        db='stock_test'
     )
     return conn
 
