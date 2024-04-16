@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import './App.css';
 import stock3 from './assets/stock_3.jpeg';
 import stock4 from './assets/stock_4.jpg';
@@ -16,46 +16,45 @@ const App = () => {
           <h2>Functions</h2>
           <ul>
             <li>
-              <a href="#">LOGIN</a>
+              <Link to="#">LOGIN</Link>
             </li>
             <li>
-              <a href="#">FORUM</a>
+              <Link to="#">FORUM</Link>
             </li>
           </ul>
         </header>
         <main>
           <ul>
             <li>
-              <a href="/dashboard">
+              <Link to="/dashboard">
                 <img src={stock3} alt="Comparison Board" />
                 COMPARISON BOARD
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#">
+              <Link to="#">
                 <img src={stock4} alt="Stock Price Trend" />
                 Stock Price Trend
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#">
-                <img src={stockMarket} alt="Company Financial Information" />{' '}
+              <Link to="#">
+                <img src={stockMarket} alt="Company Financial Information" />
                 Company Financial Information
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#">
+              <Link to="#">
                 <img src={stockPrices} alt="Portfolio Backtesting" />
                 Portfolio Backtesting
-              </a>
+              </Link>
             </li>
           </ul>
           <section>
             <h2>Explore the dynamic world of finance and investment</h2>
             <p>
-              Dive into the list of top-performing companies. Analyse key
-              financial metrics across different firms. Discuss the latest
-              trends and insights with fellow enthusiasts.
+              Dive into the list of top-performing companies. Analyse key financial metrics across different firms.
+              Discuss the latest trends and insights with fellow enthusiasts.
             </p>
             <button>EXPLORE</button>
             <button>COMPARE</button>
@@ -63,7 +62,7 @@ const App = () => {
           </section>
         </main>
         <Routes>
-          <Route path="/dashboard" component={Dashboard} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
         <footer>
           <p>Footer content goes here</p>

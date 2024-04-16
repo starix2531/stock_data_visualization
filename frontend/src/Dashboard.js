@@ -16,6 +16,7 @@ const Dashboard = () => {
     });
   };
 
+  
   useEffect(() => {
     if (data.length > 0) {
       // Remove existing chart elements
