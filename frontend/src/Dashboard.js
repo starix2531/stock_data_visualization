@@ -5,17 +5,20 @@ import "./Dashboard.css";
 const Dashboard = () => {
   const [data, setData] = useState([]);
 
-  const fetchData = () => {
+  const fetchData = async () => {
     const ticker = document.getElementById("ticker").value;
     const startDate = document.getElementById("startDate").value;
     const endDate = document.getElementById("endDate").value;
-    const url = `/api/stock_data?ticker=${ticker}&start_date=${startDate}&end_date=${endDate}`;
+    const url = `http://127.0.0.1:5000/api/stock_data?ticker=${ticker}&start_date=${startDate}&end_date=${endDate}`;
 
-    d3.json(url).then((data) => {
-      setData(data);
-    });
+    try {
+      const response = await fetch(url);
+      const jsonData = await response.json();
+      setData(jsonData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
-
   
   useEffect(() => {
     if (data.length > 0) {

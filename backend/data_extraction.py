@@ -2,10 +2,12 @@ from flask import Flask, jsonify, request
 import sqlalchemy
 from google.cloud.sql.connector import Connector
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
-
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/path/to/your/credentials.json'
+CORS(app)
+# '/app/credentials.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'application_default_credentials.json'
 
 def getconn() -> sqlalchemy.engine.Connection:
     connector = Connector()
@@ -39,7 +41,16 @@ def get_stock_data():
             "start_date": start_date,
             "end_date": end_date
         })
-        data = result.fetchall()
+        column_names = result.keys()
+        data = []
+        for row in result:
+            row_data = {}
+            for i, column in enumerate(column_names):
+                if column == 'Date':
+                    row_data[column] = row[i].strftime('%Y-%m-%d')
+                else:
+                    row_data[column] = float(row[i])
+            data.append(row_data)
 
     return jsonify(data)
 
