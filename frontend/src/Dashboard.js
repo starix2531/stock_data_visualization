@@ -189,8 +189,8 @@ const Dashboard = () => {
 
       const tooltipWidth = tooltip.node().getBoundingClientRect().width;
       const tooltipHeight = tooltip.node().getBoundingClientRect().height;
-      const tooltipX = event.pageX / 1.8 - tooltipWidth/2.5;
-      const tooltipY = event.pageY/6 - tooltipHeight;
+      const tooltipX = event.pageX  - tooltipWidth*6.5;
+      const tooltipY = event.pageY/6 - tooltipHeight*1.5;
 
       tooltip.style("transform", `translate(${tooltipX}px, ${tooltipY}px)`);
     }

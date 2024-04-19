@@ -41,16 +41,11 @@ def get_stock_data():
             "start_date": start_date,
             "end_date": end_date
         })
-        column_names = result.keys()
-        data = []
-        for row in result:
-            row_data = {}
-            for i, column in enumerate(column_names):
-                if column == 'Date':
-                    row_data[column] = row[i].strftime('%Y-%m-%d')
-                else:
-                    row_data[column] = float(row[i])
-            data.append(row_data)
+        data = [dict(row) for row in result.mappings()]
+
+    # Convert date to string format
+    for row in data:
+        row['Date'] = row['Date'].strftime('%Y-%m-%d')
 
     return jsonify(data)
 
