@@ -5,7 +5,7 @@ import "./Dashboard.css";
 const Dashboard = () => {
   const [data, setData] = useState([]);
   const [tickers, setTickers] = useState(["AAPL", "GOOGL", "MSFT", "", ""]);
-
+  const [financialData, setFinancialData] = useState({});
   useEffect(() => {
     if (data.length > 0) {
       renderChart();
@@ -25,11 +25,25 @@ const Dashboard = () => {
       }
       return null;
     });
-
     try {
       const results = await Promise.all(promises);
       const filteredResults = results.filter((result) => result !== null);
       setData(filteredResults);
+
+      // Fetch financial data for each ticker
+      const financialDataPromises = filteredResults.map(async (result) => {
+        const url = `http://127.0.0.1:5000/api/financial_info?ticker=${result.ticker}`;
+        const response = await fetch(url);
+        const jsonData = await response.json();
+        return { ticker: result.ticker, data: jsonData };
+      });
+
+      const financialDataResults = await Promise.all(financialDataPromises);
+      const financialDataMap = financialDataResults.reduce((acc, result) => {
+        acc[result.ticker] = result.data;
+        return acc;
+      }, {});
+      setFinancialData(financialDataMap);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -190,7 +204,7 @@ const Dashboard = () => {
       const tooltipWidth = tooltip.node().getBoundingClientRect().width;
       const tooltipHeight = tooltip.node().getBoundingClientRect().height;
       const tooltipX = event.pageX  - tooltipWidth*6.5;
-      const tooltipY = event.pageY/6 - tooltipHeight*1.5;
+      const tooltipY = event.pageY/2 - tooltipHeight*1.5;
 
       tooltip.style("transform", `translate(${tooltipX}px, ${tooltipY}px)`);
     }
@@ -229,6 +243,25 @@ const Dashboard = () => {
       </div>
       <button onClick={fetchData}>Fetch Data</button>
       <div id="chart"></div>
+      <div id="chart"></div>
+      <div className="financial-info-container">
+        {data.map((result) => (
+          <div key={result.ticker} className="financial-info">
+            <h3>{result.ticker}</h3>
+            {financialData[result.ticker] ? (
+              <div>
+                <p>Market Cap: {financialData[result.ticker].market_cap}</p>
+                <p>P/E Ratio: {financialData[result.ticker].price_to_earnings_ratio}</p>
+                <p>P/B Ratio: {financialData[result.ticker].price_to_book_ratio}</p>
+                <p>EPS: {financialData[result.ticker].earnings_per_share}</p>
+                {/* Display other financial information as needed */}
+              </div>
+            ) : (
+              <p>Loading financial data...</p>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
