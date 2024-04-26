@@ -21,8 +21,11 @@ const App = () => {
 
   return (
     <Layout>
-      <Sider width={200} style={{ background: '#fff' }}>
+      {/* Sidebar */}
+      <Sider width={200} style={{ background: '#1f2937' }}>
+        <div className="logo">InvestorData</div>
         <Menu
+          theme="dark"
           mode="inline"
           onClick={onMenuClick}
           selectedKeys={[location.pathname]}
@@ -33,13 +36,14 @@ const App = () => {
           <Menu.Item key="/ranking">Stock Ranking</Menu.Item>
         </Menu>
       </Sider>
+
+      {/* Main Content */}
       <Layout>
         <Content style={{ padding: '24px' }}>
           {location.pathname === '/' && (
             <>
               <header>
-                <h1>InvestorData</h1>
-                <h2>Functions</h2>
+                <h1>Welcome to InvestorData</h1>
                 <ul>
                   <li>
                     <Link to="/login">LOGIN</Link>
@@ -49,51 +53,57 @@ const App = () => {
                   </li>
                 </ul>
               </header>
+
               <main>
-                <ul>
-                  <li>
+                {/* Main Content - Image Links */}
+                <div className="image-links">
+                  <div className="image-link">
                     <Link to="/dashboard">
                       <img src={stock3} alt="Comparison Board" />
-                      COMPARISON BOARD
+                      <h3>COMPARISON BOARD</h3>
+                      <p>Compare the performance of different stocks and analyze their trends.</p>
                     </Link>
-                  </li>
-                  <li>
+                  </div>
+                  <div className="image-link">
                     <Link to="/stock-trend">
                       <img src={stock4} alt="Stock Price Trend" />
-                      Stock Price Trend
+                      <h3>STOCK PRICE TREND</h3>
+                      <p>Visualize the historical price trends of individual stocks.</p>
                     </Link>
-                  </li>
-                  <li>
+                  </div>
+                  <div className="image-link">
                     <Link to="/financial-info">
                       <img src={stockMarket} alt="Company Financial Information" />
-                      Company Financial Information
+                      <h3>COMPANY FINANCIAL INFORMATION</h3>
+                      <p>Access detailed financial information for various companies.</p>
                     </Link>
-                  </li>
-                  <li>
-                    <Link to="/backtesting">
-                      <img src={stockPrices} alt="Portfolio Backtesting" />
-                      Portfolio Backtesting
-                    </Link>
-                  </li>
-                </ul>
-                <section>
-                  <h2>Explore the dynamic world of finance and investment</h2>
+                  </div>
+                </div>
+
+                {/* Main Content - Explore Section */}
+                <section className="explore-section">
+                  <h2>Explore the Dynamic World of Finance and Investment</h2>
                   <p>
-                    Dive into the list of top-performing companies. Analyse key
-                    financial metrics across different firms. Discuss the latest
-                    trends and insights with fellow enthusiasts.
+                    Dive into the list of top-performing companies. Analyze key financial metrics across different firms.
+                    Discuss the latest trends and insights with fellow enthusiasts.
                   </p>
-                  <button>EXPLORE</button>
-                  <button>COMPARE</button>
-                  <button>VISIT FORUM</button>
+                  <div className="button-group">
+                    <button>EXPLORE</button>
+                    <button>COMPARE</button>
+                    <button>VISIT FORUM</button>
+                  </div>
                 </section>
               </main>
             </>
           )}
+
+          {/* Routes */}
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/ranking" element={<StockRanking />} />
           </Routes>
+
+          {/* Footer */}
           <Footer />
         </Content>
       </Layout>
@@ -104,7 +114,7 @@ const App = () => {
 const Footer = () => {
   return (
     <footer>
-      <p>Footer content goes here</p>
+      <p>&copy; 2023 InvestorData. All rights reserved.</p>
     </footer>
   );
 };

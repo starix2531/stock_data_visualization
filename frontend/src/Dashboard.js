@@ -1,16 +1,32 @@
+// Dashboard.js
 import React, { useState, useEffect } from "react";
-import * as d3 from "d3";
 import "./Dashboard.css";
+import { Autocomplete, TextField, Chip } from '@mui/material';
+import LineChart from "./LineChart";
+import DebtEquityScatterPlot from "./DebtEquityScatterPlot";
+import EPSBarChart from "./EPSBarChart";
 
 const Dashboard = () => {
+  const [tickerOptions, setTickerOptions] = useState([]);
   const [data, setData] = useState([]);
   const [tickers, setTickers] = useState(["AAPL", "GOOGL", "MSFT", "", ""]);
   const [financialData, setFinancialData] = useState({});
+  const [selectedTickers, setSelectedTickers] = useState([]);
+
   useEffect(() => {
-    if (data.length > 0) {
-      renderChart();
+    fetchTickerOptions();
+  }, []);
+
+  const fetchTickerOptions = async () => {
+    try {
+      const tickersData = await fetch('assets/tickers.txt').then(response => response.text());
+      const options = tickersData.split('\n').map((ticker) => ticker.trim());
+      setTickerOptions(options);
+      console.log('Ticker options:', tickersData);
+    } catch (error) {
+      console.error('Error fetching ticker options:', error);
     }
-  }, [data]);
+  };
 
   const fetchData = async () => {
     const startDate = document.getElementById("startDate").value;
@@ -25,12 +41,12 @@ const Dashboard = () => {
       }
       return null;
     });
+
     try {
       const results = await Promise.all(promises);
       const filteredResults = results.filter((result) => result !== null);
       setData(filteredResults);
 
-      // Fetch financial data for each ticker
       const financialDataPromises = filteredResults.map(async (result) => {
         const url = `http://127.0.0.1:5000/api/financial_info?ticker=${result.ticker}`;
         const response = await fetch(url);
@@ -49,184 +65,45 @@ const Dashboard = () => {
     }
   };
 
-  const renderChart = () => {
-    // Remove existing chart elements
-    d3.select("#chart").selectAll("*").remove();
-
-    // Create the line chart using D3.js
-    const margin = { top: 20, right: 20, bottom: 30, left: 50 };
-    const width = 800 - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
-
-    const svg = d3
-      .select("#chart")
-      .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
-
-    const parseDate = d3.timeParse("%Y-%m-%d");
-
-    const x = d3.scaleTime().range([0, width]);
-    const y = d3.scaleLinear().range([height, 0]);
-
-    const line = d3
-      .line()
-      .x((d) => x(d.Date))
-      .y((d) => y(d.Close));
-
-    const color = d3.scaleOrdinal(d3.schemeCategory10);
-
-    data.forEach((result) => {
-      result.data.forEach((d) => {
-        d.Date = parseDate(d.Date);
-        d.Close = +d.Close;
-      });
-    });
-
-    const allData = data.reduce((acc, result) => [...acc, ...result.data], []);
-
-    x.domain(d3.extent(allData, (d) => d.Date));
-    y.domain([0, d3.max(allData, (d) => d.Close)]);
-
-    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
-    svg.append("g").call(d3.axisLeft(y));
-
-    data.forEach((result, i) => {
-      svg
-        .append("path")
-        .datum(result.data)
-        .attr("fill", "none")
-        .attr("stroke", color(i))
-        .attr("stroke-width", 1.5)
-        .attr("d", line);
-    });
-
-    // Add legend
-    const legend = svg
-      .selectAll(".legend")
-      .data(data)
-      .enter()
-      .append("g")
-      .attr("class", "legend")
-      .attr("transform", (d, i) => `translate(0,${i * 20})`);
-
-    legend
-      .append("rect")
-      .attr("x", width - 18)
-      .attr("width", 18)
-      .attr("height", 18)
-      .style("fill", (d, i) => color(i));
-
-    legend
-      .append("text")
-      .attr("x", width - 24)
-      .attr("y", 9)
-      .attr("dy", ".35em")
-      .style("text-anchor", "end")
-      .text((d) => d.ticker);
-        // Add price details on hover
-    const focus = svg.append("g").attr("class", "focus").style("display", "none");
-
-    focus.append("circle").attr("r", 4.5);
-
-    focus.append("text").attr("x", 9).attr("dy", ".35em");
-
-    svg
-      .append("rect")
-      .attr("class", "overlay")
-      .attr("width", width)
-      .attr("height", height)
-      .on("mouseover", () => focus.style("display", null))
-      .on("mouseout", () => focus.style("display", "none"))
-      .on("mousemove", mousemove);
-
-
-    // Add zooming functionality
-    const zoom = d3
-      .zoom()
-      .scaleExtent([1, 10])
-      .translateExtent([[0, 0], [width, height]])
-      .extent([[0, 0], [width, height]])
-      .on("zoom", zoomed);
-
-    svg.call(zoom);
-
-    function zoomed(event) {
-      const xz = event.transform.rescaleX(x);
-      svg.select(".x-axis").call(d3.axisBottom(xz));
-      svg.select(".vertical-line").attr("transform", event.transform);
-      data.forEach((result, i) => {
-        svg.select(`path[stroke="${color(i)}"]`).attr("d", line.x((d) => xz(d.Date)));
-      });
-    }
-
-    const verticalLine = svg.append("line").attr("class", "vertical-line").style("display", "none");
-
-    const tooltip = d3.select(".dashboard").append("div").attr("class", "tooltip").style("display", "none");
-
-    svg
-      .append("rect")
-      .attr("class", "overlay")
-      .attr("width", width)
-      .attr("height", height)
-      .on("mouseover", () => {
-        verticalLine.style("display", null);
-        tooltip.style("display", null);
-      })
-      .on("mouseout", () => {
-        verticalLine.style("display", "none");
-        tooltip.style("display", "none");
-      })
-      .on("mousemove", mousemove);
-
-    function mousemove(event) {
-      const x0 = x.invert(d3.pointer(event)[0]);
-      const prices = data.map((result) => {
-        const i = d3.bisector((d) => d.Date).left(result.data, x0, 1);
-        const d0 = result.data[i - 1];
-        const d1 = result.data[i];
-        return x0 - d0.Date > d1.Date - x0 ? d1 : d0;
-      });
-
-      verticalLine
-        .attr("x1", x(prices[0].Date))
-        .attr("y1", 0)
-        .attr("x2", x(prices[0].Date))
-        .attr("y2", height);
-
-      tooltip.html(
-        `Date: ${prices[0].Date.toLocaleDateString()}<br/>` +
-          prices.map((price, i) => `${data[i].ticker}: $${price.Close.toFixed(2)}`).join("<br/>")
-      );
-
-      const tooltipWidth = tooltip.node().getBoundingClientRect().width;
-      const tooltipHeight = tooltip.node().getBoundingClientRect().height;
-      const tooltipX = event.pageX  - tooltipWidth*6.5;
-      const tooltipY = event.pageY/2 - tooltipHeight*1.5;
-
-      tooltip.style("transform", `translate(${tooltipX}px, ${tooltipY}px)`);
-    }
-  }
   const handleTickerChange = (index, value) => {
     const newTickers = [...tickers];
     newTickers[index] = value;
     setTickers(newTickers);
   };
 
+  const handleTickerSelect = (event, value) => {
+    setSelectedTickers(value);
+  };
+
   return (
     <div className="dashboard">
       <h1>Stock Price Visualization</h1>
+      <div className="search-bar">
+        <Autocomplete
+          multiple
+          value={selectedTickers}
+          options={tickerOptions}
+          getOptionLabel={(option) => option}
+          renderInput={(params) => <TextField {...params} label="Search Tickers" />}
+          onChange={(event, value) => handleTickerSelect(event, value)}
+          renderTags={(value, getTagProps) =>
+            value.map((option, index) => (
+              <Chip key={index} label={option} {...getTagProps({ index })} />
+            ))
+          }
+        />
+      </div>
       <div className="input-container">
         {tickers.map((ticker, index) => (
           <div key={index} className="ticker-input">
             <label htmlFor={`ticker-${index}`}>Ticker {index + 1}:</label>
-            <input
-              type="text"
+            <Autocomplete
               id={`ticker-${index}`}
               value={ticker}
-              onChange={(e) => handleTickerChange(index, e.target.value)}
+              options={tickerOptions}
+              getOptionLabel={(option) => option}
+              renderInput={(params) => <TextField {...params} label={`Ticker ${index + 1}`} />}
+              onChange={(event, value) => handleTickerChange(index, value)}
             />
           </div>
         ))}
@@ -242,8 +119,13 @@ const Dashboard = () => {
         </div>
       </div>
       <button onClick={fetchData}>Fetch Data</button>
-      <div id="chart"></div>
-      <div id="chart"></div>
+      {data.length > 0 && Object.keys(financialData).length === data.length && (
+        <>
+          <LineChart data={data} />
+          <DebtEquityScatterPlot data={data} financialData={financialData} />
+          <EPSBarChart data={data} financialData={financialData} />
+        </>
+      )}
       <div className="financial-info-container">
         {data.map((result) => (
           <div key={result.ticker} className="financial-info">
@@ -254,7 +136,6 @@ const Dashboard = () => {
                 <p>P/E Ratio: {financialData[result.ticker].price_to_earnings_ratio}</p>
                 <p>P/B Ratio: {financialData[result.ticker].price_to_book_ratio}</p>
                 <p>EPS: {financialData[result.ticker].earnings_per_share}</p>
-                {/* Display other financial information as needed */}
               </div>
             ) : (
               <p>Loading financial data...</p>

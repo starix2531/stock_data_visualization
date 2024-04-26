@@ -130,7 +130,36 @@
   stroke-dasharray: 3, 3;
 }
 
-.tooltip {
+/* Styles for the additional charts */
+#debt-equity-scatter-plot,
+#eps-bar-chart {
+  margin-top: 20px;
+}
+
+.scatter-plot .axis path,
+.scatter-plot .axis line,
+.bar-chart .axis path,
+.bar-chart .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.scatter-plot .dot {
+  fill: steelblue;
+  stroke: #fff;
+}
+
+.bar-chart .bar {
+  fill: steelblue;
+}
+
+.bar-chart .bar:hover {
+  fill: #3e8e41;
+}
+
+.scatter-plot .tooltip,
+.bar-chart .tooltip {
   position: absolute;
   background-color: #fff;
   border: 1px solid #ccc;

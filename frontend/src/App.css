@@ -1,5 +1,13 @@
 .App {
-  font-family: sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+}
+
+.logo {
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+  padding: 16px;
   text-align: center;
 }
 
@@ -8,12 +16,13 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background-color: #4c9e5b;
+  background-color: #1f2937;
+  color: #fff;
   margin-bottom: 20px;
 }
 
 header h1 {
-  color: #fff;
+  font-size: 32px;
 }
 
 header ul {
@@ -30,14 +39,91 @@ header ul li {
 header ul li a {
   color: #fff;
   text-decoration: none;
+  font-weight: bold;
 }
 
 main {
   padding: 20px;
 }
 
+.image-links {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.image-link {
+  width: 30%;
+  text-align: center;
+  background-color: #f3f4f6;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+.image-link:hover {
+  transform: translateY(-5px);
+}
+
+.image-link img {
+  width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.image-link h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #1f2937;
+}
+
+.image-link p {
+  color: #4b5563;
+}
+
+.explore-section {
+  background-color: #e5e7eb;
+  padding: 40px;
+  border-radius: 8px;
+}
+
+.explore-section h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #1f2937;
+}
+
+.explore-section p {
+  color: #4b5563;
+  margin-bottom: 20px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.button-group button {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #1f2937;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button-group button:hover {
+  background-color: #374151;
+}
+
 footer {
-  background-color: #333333;
+  background-color: #1f2937;
   color: #fff;
   padding: 15px;
   text-align: center;
