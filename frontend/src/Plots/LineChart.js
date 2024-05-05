@@ -148,7 +148,7 @@ const LineChart = ({ data }) => {
       const tooltipWidth = tooltip.node().getBoundingClientRect().width;
       const tooltipHeight = tooltip.node().getBoundingClientRect().height;
       const tooltipX = event.pageX  - tooltipWidth - 550;
-      const tooltipY = event.pageY/2 - tooltipHeight*1.5 - 1600;
+      const tooltipY = event.pageY/2 - tooltipHeight*1.5 - 2400;
 
       tooltip.style("transform", `translate(${tooltipX}px, ${tooltipY}px)`);
     }

@@ -2,16 +2,17 @@
 import React, { useState, useEffect } from "react";
 import "./Dashboard.css";
 import { Autocomplete, TextField, Chip } from '@mui/material';
-import LineChart from "./LineChart";
-import DebtEquityScatterPlot from "./DebtEquityScatterPlot";
-import EPSBarChart from "./EPSBarChart";
+import LineChart from "./Plots/LineChart";
+import DebtEquityScatterPlot from "./Plots/DebtEquityScatterPlot";
+import EPSBarChart from "./Plots/EPSBarChart";
+import SpotPlot from "./Plots/SpotPlot";
+import DebtRatioBarChart from "./Plots/DebtRatioBarChart";
 
 const Dashboard = () => {
   const [tickerOptions, setTickerOptions] = useState([]);
   const [data, setData] = useState([]);
-  const [tickers, setTickers] = useState(["AAPL", "GOOGL", "MSFT", "", ""]);
+  const [tickers, setTickers] = useState(["AAPL", "GOOGL", "MSFT"]);
   const [financialData, setFinancialData] = useState({});
-  const [selectedTickers, setSelectedTickers] = useState([]);
 
   useEffect(() => {
     fetchTickerOptions();
@@ -19,10 +20,13 @@ const Dashboard = () => {
 
   const fetchTickerOptions = async () => {
     try {
-      const tickersData = await fetch('assets/tickers.txt').then(response => response.text());
-      const options = tickersData.split('\n').map((ticker) => ticker.trim());
+      const response = await fetch('http://127.0.0.1:5000/api/tickers');
+      if (!response.ok) {
+        throw new Error('Error fetching ticker options');
+      }
+      const tickersData = await response.text();
+      const options = tickersData.split('\n').map((ticker) => ticker.trim()).filter((ticker) => ticker !== '');
       setTickerOptions(options);
-      console.log('Ticker options:', tickersData);
     } catch (error) {
       console.error('Error fetching ticker options:', error);
     }
@@ -65,14 +69,8 @@ const Dashboard = () => {
     }
   };
 
-  const handleTickerChange = (index, value) => {
-    const newTickers = [...tickers];
-    newTickers[index] = value;
-    setTickers(newTickers);
-  };
-
   const handleTickerSelect = (event, value) => {
-    setSelectedTickers(value);
+    setTickers(value);
   };
 
   return (
@@ -81,32 +79,17 @@ const Dashboard = () => {
       <div className="search-bar">
         <Autocomplete
           multiple
-          value={selectedTickers}
+          value={tickers}
           options={tickerOptions}
           getOptionLabel={(option) => option}
           renderInput={(params) => <TextField {...params} label="Search Tickers" />}
-          onChange={(event, value) => handleTickerSelect(event, value)}
+          onChange={handleTickerSelect}
           renderTags={(value, getTagProps) =>
             value.map((option, index) => (
               <Chip key={index} label={option} {...getTagProps({ index })} />
             ))
           }
         />
-      </div>
-      <div className="input-container">
-        {tickers.map((ticker, index) => (
-          <div key={index} className="ticker-input">
-            <label htmlFor={`ticker-${index}`}>Ticker {index + 1}:</label>
-            <Autocomplete
-              id={`ticker-${index}`}
-              value={ticker}
-              options={tickerOptions}
-              getOptionLabel={(option) => option}
-              renderInput={(params) => <TextField {...params} label={`Ticker ${index + 1}`} />}
-              onChange={(event, value) => handleTickerChange(index, value)}
-            />
-          </div>
-        ))}
       </div>
       <div className="date-input-container">
         <div className="date-input">
@@ -124,6 +107,8 @@ const Dashboard = () => {
           <LineChart data={data} />
           <DebtEquityScatterPlot data={data} financialData={financialData} />
           <EPSBarChart data={data} financialData={financialData} />
+          <SpotPlot data={data} financialData={financialData} />
+          <DebtRatioBarChart data={data} financialData={financialData} />
         </>
       )}
       <div className="financial-info-container">

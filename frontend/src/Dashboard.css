@@ -167,3 +167,25 @@
   font-size: 14px;
   pointer-events: none;
 }
+
+/* Dashboard.css */
+/* Dashboard.css */
+.grid line {
+  stroke: #ddd;
+  stroke-opacity: 0.7;
+  shape-rendering: crispEdges;
+}
+
+.grid path {
+  stroke-width: 0;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px;
+  border-radius: 5px;
+  pointer-events: none;
+  font-size: 12px;
+}

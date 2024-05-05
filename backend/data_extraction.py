@@ -94,5 +94,15 @@ def get_financial_info():
             financial_info = None
 
     return jsonify(financial_info)
+
+@app.route('/api/tickers', methods=['GET'])
+def get_tickers():
+    try:
+        with open('utils/tickers.txt', 'r') as file:
+            tickers = file.read()
+        return tickers
+    except FileNotFoundError:
+        return jsonify({'error': 'Ticker file not found'}), 404
+
 if __name__ == '__main__':
     app.run()
