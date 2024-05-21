@@ -1,11 +1,13 @@
-from flask import Flask, jsonify, request
+from fastapi import FastAPI, Query
 import sqlalchemy
 from google.cloud.sql.connector import Connector
 import os
+from firebase_admin import credentials, firestore, initialize_app
+from datetime import datetime, timedelta
 
-app = Flask(__name__)
+app = FastAPI()
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "/Users/chenghaosun/.config/gcloud/application_default_credentials.json"
+#os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "/Users/chenghaosun/.config/gcloud/application_default_credentials.json"
 
 def getconn() -> sqlalchemy.engine.Connection:
     connector = Connector()
@@ -23,12 +25,8 @@ pool = sqlalchemy.create_engine(
     creator=getconn,
 )
 
-@app.route('/api/stock_data', methods=['GET'])
-def get_stock_data():
-    ticker = request.args.get('ticker')
-    start_date = request.args.get('start_date')
-    end_date = request.args.get('end_date')
-
+@app.get('/api/stock_data')
+def get_stock_data(ticker: str = Query(...), start_date: str = Query(...), end_date: str = Query(...)):
     with pool.connect() as conn:
         sql = sqlalchemy.text(f"""
             SELECT Date, Open, High, Low, Close, `Adj Close`, Volume
@@ -51,12 +49,10 @@ def get_stock_data():
                 "Volume": float(row[6])
             })
 
-    return jsonify(data)
+    return data
 
-@app.route('/api/financial_info', methods=['GET'])
-def get_financial_info():
-    ticker = request.args.get('ticker')
-
+@app.get('/api/financial_info')
+def get_financial_info(ticker: str = Query(...)):
     with pool.connect() as conn:
         sql = sqlalchemy.text("""
             SELECT *
@@ -93,16 +89,16 @@ def get_financial_info():
         else:
             financial_info = None
 
-    return jsonify(financial_info)
+    return financial_info
 
-@app.route('/api/tickers', methods=['GET'])
+@app.get('/api/tickers')
 def get_tickers():
     try:
         with open('utils/tickers.txt', 'r') as file:
             tickers = file.read()
         return tickers
     except FileNotFoundError:
-        return jsonify({'error': 'Ticker file not found'}), 404
-
-if __name__ == '__main__':
-    app.run()
+        return {'error': 'Ticker file not found'}
+    
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))

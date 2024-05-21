@@ -22,6 +22,7 @@ const LoginForm = ({ visible, onCancel, onlogIn,onRegister }) => {
       if (!isSigningIn) {
         const result = await doSignInWithEmailAndPassword(email, password);
         setCurrentUser(result);
+        localStorage.setItem('authToken', result.token);
         onlogIn(userLoggedIn); // Use setCurrentUser instead of onLogin
         onCancel();
         setIsSigningIn(false);

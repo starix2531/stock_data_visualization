@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './SigninPart/index';
 import './App.css';
@@ -17,6 +17,7 @@ const App = () => {
   const { currentUser, setCurrentUser } = useAuth();
   const [isLoginVisible, setIsLoginVisible] = useState(false);
   const [isRegistrationVisible, setIsRegistrationVisible] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const onMenuClick = (path) => navigate(path);
 
@@ -37,34 +38,90 @@ const App = () => {
     setIsRegistrationVisible(false);
     setIsLoginVisible(true);
   };
+  const handleSignOut = () => {
+    // Clear the authentication token from local storage
+    localStorage.removeItem('authToken');
+    // Clear the current user state
+    setCurrentUser(null);
+    // Perform any other necessary sign out actions
+  };
   const showLoginModal = () => setIsLoginVisible(true);
 
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+  
+    document.addEventListener('mousedown', handleOutsideClick);
+  
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
+
+  const dropdownRef = useRef(null);
+
   const renderUserIcon = () => {
+    const getUserColor = (email) => {
+      let hash = 0;
+      for (let i = 0; i < email.length; i++) {
+        hash = email.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      let color = '#';
+      for (let i = 0; i < 3; i++) {
+        const value = (hash >> (i * 8)) & 0xFF;
+        color += ('00' + value.toString(16)).substr(-2);
+      }
+      return color;
+    };
+    const userColor = getUserColor(currentUser.email);
+    // In the renderUserIcon function
+
     if (currentUser) {
       const initialLetter = currentUser.email && currentUser.email.charAt(0).toUpperCase();
       const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
       return (
-        <div className="flex items-center space-x-2">
-          {currentUser.photoURL ? (
-            <img src={currentUser.photoURL} alt={`${currentUser.displayName} profile`} className="rounded-full w-10 h-10" />
-          ) : (
-            <div
-              className="rounded-full w-8 h-8 bg-gray-400 flex items-center justify-center text-white font-bold"
-              style={{ backgroundColor: randomColor }}
-            >
-              {initialLetter}
+        <div className="relative">
+          <button
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            className="flex items-center space-x-2 focus:outline-none"
+          >
+            {currentUser.photoURL ? (
+              <img src={currentUser.photoURL} alt={`${currentUser.displayName} profile`} className="rounded-full w-15 h-15" />
+            ) : (
+              <div
+                className="rounded-full w-8 h-8 bg-gray-400 flex items-center justify-center text-white font-bold"
+                style={{ backgroundColor: userColor }}
+              >
+                {initialLetter}
+              </div>
+            )}
+          </button>
+          {isDropdownOpen && (
+            <div ref={dropdownRef} className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10">
+              <a href="/settings" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                Settings
+              </a>
+              <button
+                onClick={handleSignOut}
+                className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+              >
+                Sign Out
+              </button>
             </div>
           )}
         </div>
       );
-    } else {
+    } else  {
       return (
         <button
           onClick={showLoginModal}
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
           type="button"
         >
-          Sign In/Sign Up
+          Sign In/Up
         </button>
       );
     }

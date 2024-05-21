@@ -13,6 +13,7 @@ const RegistrationForm = ({ visible, onCancel, onSwitchToLogin, onlogIn }) => {
   const [errorMessage, setErrorMessage] = useState('')
   const { userLoggedIn, setCurrentUser } = useAuth();
   const [modalVisible, setModalVisible] = useState(visible);
+  
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -39,6 +40,7 @@ const RegistrationForm = ({ visible, onCancel, onSwitchToLogin, onlogIn }) => {
         await doCreateUserWithEmailAndPassword(email, password);
         const result = await doSignInWithEmailAndPassword(email, password);
         setCurrentUser(result);
+        localStorage.setItem('authToken', result.token);
         onlogIn(userLoggedIn);
         closeModal();  // Close the modal after successful sign-in
       } catch (error) {
