@@ -1,23 +1,44 @@
-# Getting Started with Create React App
+# Stock Market Analysis and Portfolio Management Web Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a React-based web application for stock market analysis and portfolio management. It provides users with a comprehensive platform to visualize stock price data, analyze financial metrics, and manage their investment portfolios.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+User authentication system for secure access to the application
 
-### `npm start`
+Dashboard with interactive visualizations of stock price data and financial metrics
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Stock ranking and comparison based on various financial indicators
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Efficient frontier analysis for portfolio optimization
 
-### `npm test`
+Portfolio management features to create, edit, and track investment portfolios
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Data retrieval from external APIs for up-to-date stock information
+
+Responsive and intuitive user interface
+
+### Technologies Used
+
+React: JavaScript library for building user interfaces
+
+React Router: Library for handling navigation and routing in a React application
+
+Tailwind CSS: Utility-first CSS framework for rapid UI development
+
+Material-UI: React UI framework for pre-built components and styling
+
+Plotly: JavaScript graphing library for creating interactive charts and plots
+
+FastAPI: Python web framework for building APIs
+
+Firebase: Backend-as-a-Service platform for authentication and data storage
+
+### Getting Started
+
+To run the application locally, follow these steps:
+
+`git clone https://github.com/your-username/stock-market-app.git`
 
 ### `npm run build`
 
