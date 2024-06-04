@@ -83,7 +83,7 @@ const AddTransactionForm = ({ visible, onCancel, onSubmit, tickerOptions }) => {
       if (stockSymbol && tradeDate) {
         try {
           const response = await fetch(
-            `https://fastapi-stock-price-info-niayqkcaza-uw.a.run.app/api/stock_price?ticker=${stockSymbol}&date=${tradeDate}`
+            `Your Ticker API`
           );
           const data = await response.json();
           const fetchedPrice = data;
@@ -546,7 +546,7 @@ const GrowthComparisonChart = () => {
 
   const fetchPortfoliodata = async () => {
     if (currentUser && selectedPortfolio) {
-      const url = `https://portfolio-equity-niayqkcaza-uw.a.run.app/api/portfolio_equity?user_id=${currentUser.uid}&portfolio_id=${selectedPortfolio.id}`;
+      const url = `portfolio_equity_API`;
       const response = await fetch(url);
       const jsonData = await response.json();
       setData(jsonData.equity_data)
@@ -576,7 +576,7 @@ const GrowthComparisonChart = () => {
 
   const fetchPortfoliosWeight = async () => {
     if (currentUser && selectedPortfolio) {
-      const url = `https://fastapi-portfolio-weight-niayqkcaza-uw.a.run.app/api/portfolio_weight?user_id=${currentUser.uid}&portfolio_id=${selectedPortfolio.id}`;
+      const url = `portfolio_weight_API`;
       const response = await fetch(url);
       const jsonData = await response.json();
       console.log('Portfolio weight fetched:', jsonData);
