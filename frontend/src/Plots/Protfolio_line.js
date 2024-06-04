@@ -1,15 +1,16 @@
 // LineChart.js
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ApexCharts from "apexcharts";
 
 const LineChart = ({ data }) => {
   const chartRef = useRef(null);
+  const [chartType, setChartType] = useState("equity");
 
   useEffect(() => {
     if (data.length > 0) {
       renderChart();
     }
-  }, [data]);
+  }, [data, chartType]);
 
   const renderChart = () => {
     const options = {
@@ -32,8 +33,8 @@ const LineChart = ({ data }) => {
             pan: true,
             reset: true,
           },
-          autoSelected: "zoom", // Set the default selected tool to zoom
-          position: "bottom", // Position the toolbar at the bottom
+          autoSelected: "zoom",
+          position: "bottom",
           offsetX: 0,
           offsetY: 0,
         },
@@ -64,14 +65,19 @@ const LineChart = ({ data }) => {
           top: -26,
         },
       },
-      series: data.map((result) => ({
-        name: result.ticker,
-        data: result.data.map((d) => d.Close),
-      })),
+      series: [
+        {
+          name: chartType === "equity" ? "Equity" : "Return",
+          data: data.map((d) => ({
+            x: d.Date,
+            y: d[chartType],
+          })),
+        },
+      ],
       legend: {
         show: true,
         position: "top",
-        horizontalAlign: "left", // Align the legend to the left
+        horizontalAlign: "left",
         offsetX: 40,
         fontFamily: "Inter, sans-serif",
         fontSize: "14px",
@@ -80,7 +86,7 @@ const LineChart = ({ data }) => {
         curve: "smooth",
       },
       xaxis: {
-        categories: data[0].data.map((d) => d.Date),
+        type: "datetime",
         labels: {
           show: true,
           style: {
@@ -114,7 +120,7 @@ const LineChart = ({ data }) => {
           },
         },
         title: {
-          text: "Price",
+          text: chartType === "equity" ? "Equity" : "Return",
           style: {
             fontFamily: "Inter, sans-serif",
             fontSize: "14px",
@@ -130,7 +136,18 @@ const LineChart = ({ data }) => {
     }
   };
 
-  return <div ref={chartRef} style={{ height: "500px", width: "100%" }}></div>;
+  const handleChartToggle = () => {
+    setChartType((prevType) => (prevType === "equity" ? "Return" : "equity"));
+  };
+
+  return (
+    <div>
+      <div ref={chartRef} style={{ height: "500px", width: "100%" }}></div>
+      <button onClick={handleChartToggle}>
+        Toggle Chart: {chartType === "equity" ? "Equity" : "Return"}
+      </button>
+    </div>
+  );
 };
 
 export default LineChart;
