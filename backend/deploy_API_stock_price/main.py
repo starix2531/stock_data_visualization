@@ -18,11 +18,11 @@ app.add_middleware(
 def getconn() -> sqlalchemy.engine.Connection:
     connector = Connector()
     conn = connector.connect(
-        "avid-booster-386403:us-west1:stats418stock",
+        "",
         "pymysql",
-        user='starix',
-        password='**##418project',
-        db='stock_test'
+        user='',
+        password='',
+        db=''
     )
     return conn
 
