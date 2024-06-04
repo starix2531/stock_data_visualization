@@ -23,18 +23,18 @@ app.add_middleware(
 )
 
 # Initialize Firebase app
-cred = credentials.Certificate("stock-firebase-v1-firebase-adminsdk-phrfc-5e8cf0a852.json")
+cred = credentials.Certificate("")
 firebase_app = initialize_app(cred)
 db = firestore.client()
 
 def getconn() -> sqlalchemy.engine.Connection:
     connector = Connector()
     conn = connector.connect(
-        "avid-booster-386403:us-west1:stats418stock",
+        "",
         "pymysql",
-        user='starix',
-        password='**##418project',
-        db='stock_test'
+        user='',
+        password='',
+        db=''
     )
     return conn
 
