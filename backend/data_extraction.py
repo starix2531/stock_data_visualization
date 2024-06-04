@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 app = FastAPI()
 
-#os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "/Users/chenghaosun/.config/gcloud/application_default_credentials.json"
+#os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = ""
 
 def getconn() -> sqlalchemy.engine.Connection:
     connector = Connector()
