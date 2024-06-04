@@ -3,7 +3,7 @@
 This is a React-based web application for stock market analysis and portfolio management. It provides users with a comprehensive platform to visualize stock price data, analyze financial metrics, and manage their investment portfolios.
 
 ## Live Demo
-Check out the live demo of the application at: https://stock-market-app.vercel.app](https://starix1-niayqkcaza-uw.a.run.app
+Check out the live demo of the application at: https://starix1-niayqkcaza-uw.a.run.app
 
 ## Screenshots
 
