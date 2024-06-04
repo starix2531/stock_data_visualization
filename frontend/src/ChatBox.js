@@ -19,11 +19,11 @@ const ChatBox = () => {
 
     try {
       // Fetch the access token from the API deployed on Cloud Run
-      const tokenResponse = await fetch('https://token-api-x22z6t3cpa-uw.a.run.app/token');
+      const tokenResponse = await fetch(' YOU TOKEN API  ');
       const tokenData = await tokenResponse.json();
       const token = tokenData.token;
 
-      const response = await fetch('https://us-west1-aiplatform.googleapis.com/v1/projects/stock-firebase-v1/locations/us-west1/endpoints/3807446039267377152:predict', {
+      const response = await fetch('YOUR GPT API', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
