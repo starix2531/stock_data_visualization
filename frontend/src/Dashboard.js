@@ -51,7 +51,7 @@ const Dashboard = () => {
 
   const fetchTickerOptions = async () => {
     try {
-      const response = await fetch('https://fastapi-cloud-run-niayqkcaza-uw.a.run.app/api/tickers');
+      const response = await fetch('tickers');
       if (!response.ok) {
         throw new Error('Error fetching ticker options');
       }
@@ -69,7 +69,7 @@ const Dashboard = () => {
   const fetchData = async () => {
     const promises = tickers.map(async (ticker) => {
       if (ticker) {
-        const url = `https://fastapi-stock-price-info-niayqkcaza-uw.a.run.app/api/stock_data?ticker=${ticker}`;
+        const url = `stock_data`;
         const response = await fetch(url);
         const jsonData = await response.json();
         return { ticker, data: jsonData };
@@ -83,7 +83,7 @@ const Dashboard = () => {
       setData(filteredResults);
 
       const financialDataPromises = filteredResults.map(async (result) => {
-        const url = `https://fastapi-stock-price-info-niayqkcaza-uw.a.run.app/api/financial_info?ticker=${result.ticker}`;
+        const url = `financial_info`;
         const response = await fetch(url);
         const jsonData = await response.json();
         return { ticker: result.ticker, data: jsonData };
