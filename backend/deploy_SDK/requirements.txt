@@ -1,0 +1,6 @@
+SQLAlchemy==2.0.24
+PyMySQL==1.1.0
+cloud-sql-python-connector==1.2.4
+pandas
+SQLAlchemy==2.0.24
+yfinance
