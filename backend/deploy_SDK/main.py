@@ -10,12 +10,12 @@ import json
 app = FastAPI()
 
 # Initialize Firebase app
-cred = credentials.Certificate("stock-firebase-v1-firebase-adminsdk-phrfc-5e8cf0a852.json")
+cred = credentials.Certificate("")
 firebase_app = initialize_app(cred)
 db = firestore.client()
 
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "/Users/chenghaosun/.config/gcloud/application_default_credentials.json"
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = ""
 
 def getconn() -> sqlalchemy.engine.Connection:
     connector = Connector()
