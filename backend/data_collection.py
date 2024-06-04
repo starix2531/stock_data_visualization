@@ -6,15 +6,15 @@ import sqlalchemy
 from google.cloud.sql.connector import Connector
 # https://cloud.google.com/sdk/docs/install GCL installations
 # get credentials for type: gcloud auth application-default login
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/Users/chenghaosun/.config/gcloud/application_default_credentials.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = ''
 connector = Connector() 
 def getconn() -> pymysql.connections.Connection:
     conn: pymysql.connections.Connection = connector.connect(
-        "avid-booster-386403:us-west1:stats418stock",
+        "",
         "pymysql",
-        user='starix',
-        password='**##418project',
-        db='stock_test'
+        user='',
+        password='',
+        db=''
     )
     return conn
 
