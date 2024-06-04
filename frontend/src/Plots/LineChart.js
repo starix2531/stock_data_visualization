@@ -1,9 +1,9 @@
-// LineChart.js
 import React, { useEffect, useRef } from "react";
 import ApexCharts from "apexcharts";
 
 const LineChart = ({ data }) => {
   const chartRef = useRef(null);
+  const chartInstanceRef = useRef(null);
 
   useEffect(() => {
     if (data.length > 0) {
@@ -12,6 +12,12 @@ const LineChart = ({ data }) => {
   }, [data]);
 
   const renderChart = () => {
+    const series = data.map((result) => ({
+      name: result.ticker,
+      data: result.data.map((d) => d.Close),
+    }));
+
+
     const options = {
       chart: {
         height: 500,
@@ -32,8 +38,8 @@ const LineChart = ({ data }) => {
             pan: true,
             reset: true,
           },
-          autoSelected: "zoom", // Set the default selected tool to zoom
-          position: "bottom", // Position the toolbar at the bottom
+          autoSelected: "zoom",
+          position: "bottom",
           offsetX: 0,
           offsetY: 0,
         },
@@ -64,17 +70,20 @@ const LineChart = ({ data }) => {
           top: -26,
         },
       },
-      series: data.map((result) => ({
-        name: result.ticker,
-        data: result.data.map((d) => d.Close),
-      })),
+      series: series,
       legend: {
         show: true,
         position: "top",
-        horizontalAlign: "left", // Align the legend to the left
+        horizontalAlign: "left",
         offsetX: 40,
         fontFamily: "Inter, sans-serif",
         fontSize: "14px",
+        onItemClick: {
+          toggleDataSeries: false
+        },
+        onItemHover: {
+          highlightDataSeries: true
+        }
       },
       stroke: {
         curve: "smooth",
@@ -125,8 +134,20 @@ const LineChart = ({ data }) => {
     };
 
     if (chartRef.current) {
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy();
+      }
+
       const chart = new ApexCharts(chartRef.current, options);
       chart.render();
+
+      chart.addEventListener("legendClick", (event, chartContext, config) => {
+        const seriesName = config.seriesName;
+        if (seriesName) {
+          chart.toggleSeries(seriesName);
+        }
+      });
+      chartInstanceRef.current = chart;
     }
   };
 

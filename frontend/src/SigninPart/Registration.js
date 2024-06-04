@@ -43,7 +43,9 @@ const RegistrationForm = ({ visible, onCancel, onSwitchToLogin, onlogIn }) => {
         localStorage.setItem('authToken', result.token);
         onlogIn(userLoggedIn);
         closeModal();  // Close the modal after successful sign-in
+        window.location.reload();  // Reload the page to update the user state
       } catch (error) {
+        window.location.reload(); 
         setErrorMessage(error.message);
       }
       setIsRegistering(false);

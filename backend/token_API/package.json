@@ -1,0 +1,17 @@
+{
+    "name": "token-api",
+    "version": "1.0.0",
+    "description": "A simple API to fetch Google Cloud auth token",
+    "main": "index.js",
+    "scripts": {
+      "start": "node index.js"
+    },
+    "author": "Starix",
+    "license": "ISC",
+    "dependencies": {
+      "express": "^4.17.1",
+      "google-auth-library": "^8.2.0",
+      "cors": "^2.8.5"
+    }
+  }
+  

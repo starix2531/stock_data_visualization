@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Modal } from 'antd';
 import { doSignInWithEmailAndPassword, doSignInWithGoogle } from './auth';
 import { useAuth } from './index';
-//import './LoginForm.css';
 
 const LoginForm = ({ visible, onCancel, onlogIn,onRegister }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -26,10 +25,13 @@ const LoginForm = ({ visible, onCancel, onlogIn,onRegister }) => {
         onlogIn(userLoggedIn); // Use setCurrentUser instead of onLogin
         onCancel();
         setIsSigningIn(false);
-
+        window.location.reload(); 
       }
     } catch (error) {
-      console.error(error);
+      if (error.message === 'onlogIn is not a function') {
+        window.location.reload(); 
+      }
+
       setErrorMessage(error.message);
       setIsSigningIn(false);
     }
@@ -43,6 +45,7 @@ const LoginForm = ({ visible, onCancel, onlogIn,onRegister }) => {
             console.error(error);
             setErrorMessage(error.message);
             setIsSigningIn(false);
+            window.location.reload(); 
         });
     }
   };

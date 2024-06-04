@@ -1,114 +1,80 @@
-// DebtEquityScatterPlot.js
-import React, { useEffect } from "react";
-import * as d3 from "d3";
+import React, { useRef, useEffect } from "react";
+import ApexCharts from "apexcharts";
 
-const DebtEquityScatterPlot = ({ data, financialData }) => {
+const DebtEquityBarChart = ({ data, financialData }) => {
+  const chartRef = useRef(null);
+
   useEffect(() => {
     if (data.length > 0) {
-      renderDebtEquityScatterPlot();
+      renderDebtEquityBarChart();
     }
   }, [data, financialData]);
 
-  const renderDebtEquityScatterPlot = () => {
-    // Clear existing chart
-    d3.select("#debt-equity-scatter-plot").selectAll("*").remove();
+  const renderDebtEquityBarChart = () => {
+    const chartData = data.map((d) => ({
+      x: d.ticker,
+      y: financialData[d.ticker].total_debt_to_equity,
+    }));
 
-    // Set up dimensions and margins
-    const margin = { top: 30, right: 20, bottom: 40, left: 60 };
-    const width = 600 - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+    const options = {
+      chart: {
+        type: "bar",
+        zoom: {
+          enabled: true,
+        },
+      },
+      xaxis: {
+        type: "category",
+        labels: {
+          rotate: -45,
+          style: {
+            fontSize: "12px",
+            fontFamily: "Helvetica, Arial, sans-serif",
+          },
+        },
+      },
+      yaxis: {
+        title: {
+          text: "Debt to Equity Ratio",
+        },
+      },
+      tooltip: {
+        custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+          const ticker = w.globals.labels[dataPointIndex];
+          const debtToEquity = series[seriesIndex][dataPointIndex];
+          return `<div>Ticker: ${ticker}<br/>Debt to Equity Ratio: ${debtToEquity.toFixed(2)}</div>`;
+        },
+      },
+      legend: {
+        show: true,
+        position: 'top',
+        horizontalAlign: 'right',
+        floating: true,
+        offsetY: -25,
+        offsetX: -5,
+      },
+    };
 
-    // Create SVG element
-    const svg = d3
-      .select("#debt-equity-scatter-plot")
-      .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
+    const series = [
+      {
+        name: "Debt to Equity Ratio",
+        data: chartData,
+      },
+    ];
 
-    // Create scales
-    const x = d3.scalePoint().range([0, width]).padding(0.5);
-    const y = d3.scaleLinear().range([height, 0]);
+    const chart = new ApexCharts(chartRef.current, {
+      chart: {
+        type: "bar",
+        height: 400,
+      },
+      series: series,
+      ...options,
+    });
 
-    // Set domains
-    x.domain(data.map((d) => d.ticker));
-    y.domain([0, d3.max(data, (d) => financialData[d.ticker].total_debt_to_equity)]).nice();
-
-    // Add x-axis
-    svg
-      .append("g")
-      .attr("transform", `translate(0,${height})`)
-      .call(d3.axisBottom(x))
-      .selectAll("text")
-      .style("text-anchor", "end")
-      .attr("dx", "-.8em")
-      .attr("dy", ".15em")
-      .attr("transform", "rotate(-45)");
-
-    // Add y-axis
-    svg.append("g").call(d3.axisLeft(y));
-
-    // Add grid lines
-    svg
-      .append("g")
-      .attr("class", "grid")
-      .call(d3.axisLeft(y).tickSize(-width).tickFormat(""));
-
-    // Add data points
-    svg
-      .selectAll("circle")
-      .data(data)
-      .enter()
-      .append("circle")
-      .attr("cx", (d) => x(d.ticker))
-      .attr("cy", (d) => y(financialData[d.ticker].total_debt_to_equity))
-      .attr("r", 6)
-      .style("fill", "#69b3a2")
-      .style("opacity", 0.7)
-      .attr("stroke", "black")
-      .style("stroke-width", "1px");
-
-    // Add labels
-    svg
-      .append("text")
-      .attr("x", width / 2)
-      .attr("y", height + margin.bottom - 10)
-      .attr("text-anchor", "middle");
-
-    svg
-      .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", -margin.left + 20)
-      .attr("x", -height / 2)
-      .attr("dy", "1em")
-      .attr("text-anchor", "middle")
-      .text("Debt to Equity Ratio");
-
-    // Add tooltip
-    const tooltip = d3
-      .select("#debt-equity-scatter-plot")
-      .append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0);
-
-    svg
-      .selectAll("circle")
-      .on("mouseover", (event, d) => {
-        tooltip.transition().duration(200).style("opacity", 0.9);
-        tooltip
-          .html(
-            `Ticker: ${d.ticker}<br/>Debt to Equity Ratio: ${financialData[d.ticker].total_debt_to_equity.toFixed(2)}`
-          )
-          .style("left", `${event.pageX + 10}px`)
-          .style("top", `${event.pageY - 28}px`);
-      })
-      .on("mouseout", () => {
-        tooltip.transition().duration(500).style("opacity", 0);
-      });
+    chart.render();
   };
 
-  return <div id="debt-equity-scatter-plot"></div>;
+  return <div ref={chartRef}></div>;
 };
 
-export default DebtEquityScatterPlot;
+export default DebtEquityBarChart;
